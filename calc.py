@@ -78,12 +78,12 @@ def key_input(event):
     elif key == "esc":
         clearbtn()
 
-# Capture keyboard events when window is active
+# Enables keyboard input listener when window is active, disables previous listeners if any
 def start_key_cap():
     keyboard.unhook_all()
     keyboard.on_press(key_input)
 
-# Stop capturing keyboard events when window is not active
+# Disables keyboard input listener when window is not active
 def stop_key_cap():
     keyboard.unhook_all()
 
