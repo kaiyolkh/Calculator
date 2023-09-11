@@ -13,25 +13,34 @@ calc.title("Calculator")
 def numbtn(num):
     global expression
     global disp_exp
-    expression = expression + str(num)
-    disp_exp = disp_exp + str(num)
-    display.set(disp_exp)
+    if (expression != "" and expression[-1] in ".+-" and num in "+-") or (expression != "" and expression[-1] == "." and num == "."):
+        expression = expression
+    else:
+        expression = expression + str(num)
+        disp_exp = disp_exp + str(num)
+        display.set(disp_exp)
 
 # Makes the display of division sign look better in GUI while maintaining its function
 def divbtn():
     global expression
     global disp_exp
-    expression = expression + str("/")
-    disp_exp = disp_exp + str("÷")
-    display.set(disp_exp)
+    if (expression == "") or (expression != "" and expression[-1] in ".+-*/"):
+        expression = expression
+    else:
+        expression = expression + str("/")
+        disp_exp = disp_exp + str("÷")
+        display.set(disp_exp)
 
 # Makes the display of multiplication sign look better in GUI while maintaining its function
 def multiplybtn():
     global expression
     global disp_exp
-    expression = expression + str("*")
-    disp_exp = disp_exp + str("×")
-    display.set(disp_exp)
+    if (expression == "") or (expression != "" and expression[-1] in ".+-*/"):
+        expression = expression
+    else:
+        expression = expression + str("*")
+        disp_exp = disp_exp + str("×")
+        display.set(disp_exp)
 
 # Deletes the last character in the expression and GUI, backspace
 def backspace():
