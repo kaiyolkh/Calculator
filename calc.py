@@ -90,9 +90,6 @@ def stop_key_cap():
 expression = "" # Default values of expression and display
 disp_exp = ""
 
-# Keyboard input listener
-#keyboard.on_press(key_input)
-
 # Window focus events to start and stop keyboard capturing
 calc.bind("<FocusIn>", lambda event: start_key_cap())
 calc.bind("<FocusOut>", lambda event: stop_key_cap())
