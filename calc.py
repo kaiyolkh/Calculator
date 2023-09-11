@@ -53,9 +53,10 @@ def equalbtn():
     global expression
     global disp_exp
     result = str(eval(expression))
-    display.set(result.rstrip("0").rstrip(".") if "." in result else result)
-    expression = ""
-    disp_exp = ""
+    result_modified = result.rstrip("0").rstrip(".") if "." in result else result
+    display.set(result_modified)
+    expression = result_modified
+    disp_exp = result_modified
 
 expression = "" # Default values of expression and display
 disp_exp = ""
