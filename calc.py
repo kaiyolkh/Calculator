@@ -80,7 +80,8 @@ def key_input(event):
 
 # Capture keyboard events when window is active
 def start_key_cap():
-    keyboard.hook(key_input)
+    keyboard.unhook_all()
+    keyboard.on_press(key_input)
 
 # Stop capturing keyboard events when window is not active
 def stop_key_cap():
@@ -88,6 +89,13 @@ def stop_key_cap():
 
 expression = "" # Default values of expression and display
 disp_exp = ""
+
+# Keyboard input listener
+#keyboard.on_press(key_input)
+
+# Window focus events to start and stop keyboard capturing
+calc.bind("<FocusIn>", lambda event: start_key_cap())
+calc.bind("<FocusOut>", lambda event: stop_key_cap())
 
 # GUI
 
@@ -130,11 +138,5 @@ zero = Button(btnframe, text="0", font=("ariel 18"), fg="black", width=btnwidth,
 point = Button(btnframe, text=".", font=("ariel 18"), fg="black", width=btnwidth, height=btnheight, bd=0, bg="#eee", cursor="hand2", command=lambda: numbtn(".")).grid(row=4, column=2, padx=1, pady=1)
 equal = Button(btnframe, text="=", font=("ariel 18"), fg="black", width=btnwidth, height=btnheight, bd=0, bg="#eee", cursor="hand2", command=lambda: equalbtn()).grid(row=4, column=3, padx=1, pady=1)
 
-# Keyboard input listener
-keyboard.on_press(key_input)
-
-# Window focus events to start and stop keyboard capturing
-calc.bind("<FocusIn>", lambda event: start_key_cap())
-calc.bind("<FocusOut>", lambda event: stop_key_cap())
 
 calc.mainloop()
