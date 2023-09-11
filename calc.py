@@ -1,4 +1,5 @@
 from tkinter import *
+import keyboard
 
 # GUI 
 calc = Tk()
@@ -58,6 +59,25 @@ def equalbtn():
     expression = result_modified
     disp_exp = result_modified
 
+# Detects keyboard input
+def key_input(event):
+    key = event.name
+    if key.isdigit() or key in ["+", "-", "*", "/", ".", "(", ")"]:
+        numbtn(key) if key.isdigit() or key in "0123456789" else None
+        numbtn("+") if key == "+" else None
+        numbtn("-") if key == "-" else None
+        multiplybtn() if key == "*" else None
+        divbtn() if key == "/" else None
+        numbtn(".") if key == "." else None
+        numbtn("(") if key == "(" else None
+        numbtn(")") if key == ")" else None
+    elif key == "enter":
+        equalbtn()
+    elif key == "backspace":
+        backspace()
+    elif key == "esc":
+        clearbtn()
+
 expression = "" # Default values of expression and display
 disp_exp = ""
 
@@ -67,7 +87,7 @@ display = StringVar()
 inputframe = Frame(calc, width=312, height=50, bd=0, highlightbackground="black", highlightcolor="black", highlightthickness=2)
 inputframe.pack(side=TOP)
 
-inputfield = Entry(inputframe, font=("ariel", 20, "bold"), textvariable=display, width=50, bg="#eee", bd=0, justify=RIGHT)
+inputfield = Entry(inputframe, font=("ariel", 20, "bold"), textvariable=display, width=50, bg="#eee", bd=0, justify=RIGHT, state="readonly")
 inputfield.grid(row=0, column=0)
 inputfield.pack(ipady=10)
 
@@ -102,5 +122,7 @@ zero = Button(btnframe, text="0", font=("ariel 18"), fg="black", width=btnwidth,
 point = Button(btnframe, text=".", font=("ariel 18"), fg="black", width=btnwidth, height=btnheight, bd=0, bg="#eee", cursor="hand2", command=lambda: numbtn(".")).grid(row=4, column=2, padx=1, pady=1)
 equal = Button(btnframe, text="=", font=("ariel 18"), fg="black", width=btnwidth, height=btnheight, bd=0, bg="#eee", cursor="hand2", command=lambda: equalbtn()).grid(row=4, column=3, padx=1, pady=1)
 
+# Keyboard input listener
+keyboard.on_press(key_input)
 
 calc.mainloop()
