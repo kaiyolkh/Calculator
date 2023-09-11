@@ -78,6 +78,14 @@ def key_input(event):
     elif key == "esc":
         clearbtn()
 
+# Capture keyboard events when window is active
+def start_key_cap():
+    keyboard.hook(key_input)
+
+# Stop capturing keyboard events when window is not active
+def stop_key_cap():
+    keyboard.unhook_all()
+
 expression = "" # Default values of expression and display
 disp_exp = ""
 
@@ -124,5 +132,9 @@ equal = Button(btnframe, text="=", font=("ariel 18"), fg="black", width=btnwidth
 
 # Keyboard input listener
 keyboard.on_press(key_input)
+
+# Window focus events to start and stop keyboard capturing
+calc.bind("<FocusIn>", lambda event: start_key_cap())
+calc.bind("<FocusOut>", lambda event: stop_key_cap())
 
 calc.mainloop()
