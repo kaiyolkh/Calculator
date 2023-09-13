@@ -1,3 +1,9 @@
+"""
+Simple Python Calculator
+Made by Kyle Lam
+September 9th, 2023
+"""
+
 from tkinter import *
 import keyboard
 
@@ -13,73 +19,122 @@ calc.title("Calculator")
 def numbtn(num):
     global expression
     global disp_exp
-    if (expression != "" and expression[-1] in ".+-" and num in "+-") or (expression != "" and expression[-1] == "." and num == "."):
+    global decimal_exists
+    global openbrac
+    global ans
+    numstr = str(num)
+    if (expression != "" and expression[-1] in ".+-" and numstr in "+-") or (expression != "" and expression[-1] == "." and numstr == ".") or (expression == "0" and expression[-1] == "0" and numstr == "0") or (expression != "" and expression == ans and numstr not in "+-*/") or (expression != "" and expression[-1] == "(" and numstr == ")") or (not openbrac and numstr == ")"):
         expression = expression
+    elif (len(expression) > 1 and expression != "" and expression[-1] == "0" and expression[-2] in "+-*/()" and numstr not in ".+-*/()") or (len(expression) == 1 and expression[0] == "0" and numstr not in ".+-*/()"): # not allowing inputs with zeros in between such as '2003' or '109'
+        expression = expression[:-1]
+        disp_exp = disp_exp[:-1]
+        expression = expression + numstr
+        disp_exp = disp_exp + numstr
+        display.set(disp_exp)
+    elif numstr == ".":
+        if not decimal_exists:
+            expression = expression + numstr
+            disp_exp = disp_exp + numstr
+            display.set(disp_exp)
+            decimal_exists = True
+    elif numstr in "+-()":
+        if numstr == "(":
+            openbrac = True
+        if numstr == ")":
+            openbrac = False
+        expression = expression + numstr
+        disp_exp = disp_exp + numstr
+        display.set(disp_exp)
+        decimal_exists = False
     else:
-        expression = expression + str(num)
-        disp_exp = disp_exp + str(num)
+        expression = expression + numstr
+        disp_exp = disp_exp + numstr
         display.set(disp_exp)
 
 # Makes the display of division sign look better in GUI while maintaining its function
 def divbtn():
     global expression
     global disp_exp
+    global decimal_exists
     if (expression == "") or (expression != "" and expression[-1] in ".+-*/"):
         expression = expression
     else:
         expression = expression + str("/")
         disp_exp = disp_exp + str("÷")
         display.set(disp_exp)
+        decimal_exists = False
 
 # Makes the display of multiplication sign look better in GUI while maintaining its function
 def multiplybtn():
     global expression
     global disp_exp
+    global decimal_exists
     if (expression == "") or (expression != "" and expression[-1] in ".+-*/"):
         expression = expression
     else:
         expression = expression + str("*")
         disp_exp = disp_exp + str("×")
         display.set(disp_exp)
+        decimal_exists = False
 
 # Deletes the last character in the expression and GUI, backspace
 def backspace():
     global expression
     global disp_exp
-    expression = expression[:-1]
-    disp_exp = disp_exp[:-1]
-    display.set(disp_exp)
+    global decimal_exists
+    global openbrac
+    global ans
+    if expression != "" and expression[-1] in "+-*/()":
+        decimal_exists = True
+    if expression != "" and expression[-1] == ".":
+        decimal_exists = False
+    if expression != "" and expression[-1] == ")":
+        openbrac = True
+    if expression != "" and expression[-1] == "(":
+        openbrac = False
+    if expression != "" and expression == ans:
+        expression = expression
+    else:
+        expression = expression[:-1]
+        disp_exp = disp_exp[:-1]
+        display.set(disp_exp)
 
 # Clears the stored expression, reset calculator
 def clearbtn():
     global expression
     global disp_exp
+    global decimal_exists
+    global openbrac
     expression = ""
     disp_exp = ""
+    decimal_exists = False
+    openbrac = False
     display.set(disp_exp)
 
 # Evaluates the entered expression and display result, then automatically clears the stored expression
 def equalbtn():
     global expression
     global disp_exp
-    result = str(eval(expression))
-    result_modified = result.rstrip("0").rstrip(".") if "." in result else result
-    display.set(result_modified)
-    expression = result_modified
-    disp_exp = result_modified
+    global ans
+    global openbrac
+    #if len(expression) > 1 and expression[0] == "0" and expression[1] not in ".+-*/":
+        #expression = expression[1:]
+    if expression != "" and expression[-1] not in "+-*/" or not openbrac:
+        result = str(eval(expression))
+        result_modified = result.rstrip("0").rstrip(".") if "." in result else result
+        display.set(result_modified)
+        expression = result_modified
+        disp_exp = result_modified
+        ans = result_modified
 
 # Detects keyboard input
 def key_input(event):
     key = event.name
-    if key.isdigit() or key in ["+", "-", "*", "/", ".", "(", ")"]:
-        numbtn(key) if key.isdigit() or key in "0123456789" else None
-        numbtn("+") if key == "+" else None
-        numbtn("-") if key == "-" else None
+    if key.isdigit() or key in "+-*/().decimal":
+        numbtn(key) if key.isdigit() or key in "+-()" else None
         multiplybtn() if key == "*" else None
         divbtn() if key == "/" else None
-        numbtn(".") if key == "." else None
-        numbtn("(") if key == "(" else None
-        numbtn(")") if key == ")" else None
+        numbtn(".") if key == "." or key == "decimal" else None
     elif key == "enter":
         equalbtn()
     elif key == "backspace":
@@ -98,6 +153,9 @@ def stop_key_cap():
 
 expression = "" # Default values of expression and display
 disp_exp = ""
+ans = ""
+decimal_exists = False
+openbrac = False
 
 # Window focus events to start and stop keyboard capturing
 calc.bind("<FocusIn>", lambda event: start_key_cap())
